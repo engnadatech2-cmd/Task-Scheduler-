@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/26361294/README.md)
 # Task Scheduler
 
 A C++17 console application simulating basic OS process scheduling algorithms. Built dynamically utilizing custom-written generic data structures without relying on conventional STL containers for core algorithm queues or priority organization.
