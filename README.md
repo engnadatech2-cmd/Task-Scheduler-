@@ -1,52 +1,113 @@
-# Task Scheduler
+# ⚙️ Task Scheduler — C++17
 
-A C++17 console application simulating basic OS process scheduling algorithms. Built dynamically utilizing custom-written generic data structures without relying on conventional STL containers for core algorithm queues or priority organization.
+A console application that simulates how an Operating System decides **which process runs next** — and when.  
+Three scheduling algorithms. Zero STL containers. Pure C++17.
 
-## Features
+---
 
-- **Custom Data Structures**: Internally leverages a custom `LinkedList<T>` (Doubly Linked) and `PriorityQueue` (Max-Heap dynamically customized to prioritize lower numerical priority tags).
-- **Core Algorithms**: Precisely simulates three essential CPU scheduling methods:
-  - **FCFS** (First-Come-First-Serve)
-  - **Priority Scheduling** (Non-preemptive heap-pulled priority execution)
-  - **Round Robin** (Preemptive cyclic traversal with user-defined quantum)
-- **Interactive Menu**: Reliable user-friendly navigation for loading processes and testing different algorithmic benchmarks instantaneously.
-- **Accurate Analysis**: Evaluates accurate context variables, generating detailed output logs displaying `Average Waiting Time` and `Average Turnaround Time`. 
+## 🧠 How It Works
 
-## Architecture
+You feed it tasks. It schedules them.
 
-- `Task.h/cpp`: The comprehensive structure mapped for task definitions, embedding dynamic parameters like `remainingBurstTime` for deep algorithms like RR.
-- `LinkedList.h`: Doubly-Linked template serving cleanly as FIFO queues and Circular traversals efficiently maintaining single responsibilities.
-- `PriorityQueue.h`: Advanced Array-backed Max-Heap dynamically restructuring incoming models according to strictly mapped system priorities.
-- `Scheduler.h/cpp`: Pure abstract unification laying out standard benchmarking, reporting metrics, and abstract virtual prototypes (`run()`).
-- `FCFS.h/cpp`, `PriorityScheduler.h/cpp`, `RoundRobin.h/cpp`: Derived components extending `Scheduler` representing complete individual algorithms seamlessly isolated in scopes.
-- `main.cpp`: Driver mapping out CLI logic gracefully. 
+```
+Name: RenderFrame   Priority: 2   Burst: 12ms
+Name: SaveFile      Priority: 5   Burst:  8ms
+Name: SyncData      Priority: 1   Burst:  5ms
+```
 
-## Build & Run
+Pick an algorithm → get a full execution timeline + performance metrics.
 
-Ensure you have MinGW or a similar context natively accepting C++17 instructions. Both `std=c++17` strict compilation and sequential linking must occur. 
+---
 
-**Compile:**
+## 🔀 Scheduling Algorithms
+
+| Algorithm | Strategy | Data Structure |
+|-----------|----------|----------------|
+| **FCFS** | First in, first out — no questions asked | `LinkedList<Task>` |
+| **Priority** | Lowest number = highest urgency | `PriorityQueue<Task>` Min-Heap |
+| **Round Robin** | Everyone gets a turn, no one starves | `LinkedList<Task>` circular |
+
+All three are **non-preemptive** (except Round Robin's time-slice design).
+
+---
+
+## 📊 Output
+
+```
+=== Priority Scheduling Result ===
+Time  0 -  5  : SyncData     (priority: 1)
+Time  5 - 17  : RenderFrame  (priority: 2)
+Time 17 - 25  : SaveFile     (priority: 5)
+
+Average Waiting Time    :  7.33 ms
+Average Turnaround Time : 14.00 ms
+```
+
+---
+
+## 🏗️ Architecture
+
+```
+TaskScheduler/
+├── main.cpp                  # Menu loop & entry point
+├── Task.h / Task.cpp         # Task model (name, priority, burst, remaining)
+├── PriorityQueue.h           # Max-Heap — custom, no STL
+├── LinkedList.h              # Doubly linked list — custom, no STL
+├── Scheduler.h / .cpp        # Abstract base — run(), metrics, output
+├── FCFS.h / .cpp             # First-Come-First-Serve
+├── PriorityScheduler.h / .cpp# Priority-based scheduling
+└── RoundRobin.h / .cpp       # Round Robin with user-defined quantum
+```
+
+> Every scheduler inherits from `Scheduler` and overrides a single `run()` — clean, isolated, extensible.
+
+---
+
+## ⚙️ Build & Run
+
 ```bash
-g++ -std=c++17 main.cpp Task.cpp Scheduler.cpp FCFS.cpp PriorityScheduler.cpp RoundRobin.cpp -o scheduler
+g++ -std=c++17 main.cpp Task.cpp Scheduler.cpp FCFS.cpp \
+    PriorityScheduler.cpp RoundRobin.cpp -o scheduler
+
+./scheduler
 ```
 
-**Run:**
-```bash
-./scheduler.exe   # Or ./scheduler if on Linux environments
+> Requires: g++ with C++17 support (MinGW on Windows / g++ on Linux)
+
+---
+
+## 🖥️ Menu
+
+```
+=== Task Scheduler ===
+ 1. Add Task
+ 2. Run FCFS
+ 3. Run Priority Scheduling
+ 4. Run Round Robin
+ 5. Show All Tasks
+ 0. Exit
 ```
 
-## Output Example
+---
 
-```text
-=== FCFS Scheduling Result ===
-Time 0   - 10  : ProcessName (priority: 2)
-Time 10  - 15  : AnotherTask (priority: 5)
-Time 15  - 17  : TaskFinal (priority: 1)
+## 🔍 Design Highlights
 
-Average Waiting Time    : 6.67 ms
-Average Turnaround Time : 12.33 ms
-```
+- **No STL** — `LinkedList<T>` and `PriorityQueue<T>` built from scratch
+- **Abstract base class** — `Scheduler` enforces a single interface across all algorithms
+- **remainingBurstTime** — tracked separately so Round Robin never corrupts original data
+- **True time simulation** — `turnaroundTime = completionTime - arrivalTime`
 
-## Author
+---
 
-Developed under Professional C++ standards enforcing pure Object-Oriented paradigms.
+## 🚀 Planned
+
+- [ ] Preemptive Priority Scheduling
+- [ ] Gantt Chart ASCII visualization
+- [ ] CSV export for results
+
+---
+
+## 👩‍💻 Author
+
+**Nada Magdy** — C++ Systems Developer  
+[GitHub](https://github.com/engnadatech2-cmd) · [LinkedIn](https://linkedin.com/in/nada-magdy-6717703b9)
